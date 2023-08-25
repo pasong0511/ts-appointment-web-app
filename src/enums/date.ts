@@ -30,3 +30,5 @@ export enum WEEK_LIST_KR {
     "금",
     "토",
 }
+
+export const WEEK_LIST_KR_LIST = ["일", "월", "화", "수", "목", "금", "토"];

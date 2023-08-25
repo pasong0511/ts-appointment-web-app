@@ -13,6 +13,7 @@ export interface IDate {
 }
 
 export interface IViewDate {
+    full: string;
     year: number;
     month: number;
     day: number;

@@ -1,0 +1,23 @@
+:root {
+    --calendar-size-width: 700px;
+    --calendar-size-hight: 200px;
+}
+
+.calendar {
+    width: var(--calendar-size-width);
+    height: var(--calendar-size-hight);
+    background-color: rgb(215, 233, 255);
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+}
+
+.calendar-week,
+.calandar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}

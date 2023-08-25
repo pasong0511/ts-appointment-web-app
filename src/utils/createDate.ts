@@ -28,6 +28,7 @@ export const createDate = (
 
     for (let i = prevDate.LastDay - prevDate.week; i <= prevDate.LastDay; i++) {
         dateList.push({
+            full: `${prevDate.year}-${prevDate.month + 1}-${i}`,
             year: prevDate.year,
             month: prevDate.month + 1,
             day: i,
@@ -43,6 +44,7 @@ export const createDate = (
     //1일부터 마지막 일까지 반복문 돌면서 만들기
     for (let i = 1; i <= thisDate.LastDay; i++) {
         dateList.push({
+            full: `${thisDate.year}-${thisDate.month + 1}-${i}`,
             year: thisDate.year,
             month: thisDate.month + 1,
             day: i,
@@ -54,6 +56,7 @@ export const createDate = (
     //다음달 초 가져옴
     for (let i = 1; i < 7 - thisDate.week; i++) {
         dateList.push({
+            full: `${nextDate.year}-${nextDate.month + 1}-${i}`,
             year: nextDate.year,
             month: nextDate.month,
             day: i,
