@@ -6,7 +6,7 @@
 .calendar {
     width: var(--calendar-size-width);
     height: var(--calendar-size-hight);
-    background-color: rgb(215, 233, 255);
+    /* background-color: rgb(215, 233, 255); */
 }
 
 .calendar-header {

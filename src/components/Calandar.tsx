@@ -1,35 +1,53 @@
 import { useEffect, useState } from "react";
 import { WEEK_LIST, WEEK_LIST_KR, WEEK_LIST_KR_LIST } from "../enums/date";
-import { ILastDate, IViewDate } from "../types/date";
-import { createDate } from "../utils/createDate";
+import {
+    ILastDate,
+    IHolidayAPIData,
+    IHolidyDate,
+    IViewDate,
+    IInfomationViewDate,
+} from "../types/date";
+import {
+    createDate,
+    addInfomationDate,
+    getCreateDateList,
+} from "../utils/createDate";
 import axios from "axios";
 
-function fetchDate() {
-    const param = {
-        solYear: 2023,
-        solMonth: 8,
-        _type: "json",
-        ServiceKey:
-            "cK2GBHGuJ7z5tzMMucvtIx2As8IdqXQgBGwIsaBIkkLNRvD%2FYxw2dlBb6twoQEGB1CDczqaWcq0FLA4rnrIs6g%3D%3D",
-    };
-    return axios.get(
-        "http://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo",
-        param as any
+function fetchHolidyDate(path: string) {
+    const API_URL = `http://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/${path}?`;
+    return axios.get<IHolidayAPIData>(
+        API_URL +
+            "solYear=2023&numOfRows=100&ServiceKey=" +
+            process.env.REACT_APP_PUBLIC_POTAL_KEY
     );
 }
 
 export default function Calandar() {
     const date = new Date();
-    const [viewDate, setViewData] = useState<IViewDate[]>([]);
-    const [holiday, setHoliDay] = useState([]);
+    const [viewDate, setViewData] = useState<IInfomationViewDate[]>([]);
+    const [holiday, setHoliDay] = useState<
+        {
+            [key: string]: IHolidyDate;
+        }[]
+    >();
     const [year, setYear] = useState(date.getFullYear());
     const [month, setMonth] = useState(date.getMonth() + 1);
 
-    async function fetchAPI() {
-        const response = await fetchDate();
-        const data = response.data;
-        console.log(data);
-        setHoliDay(data);
+    async function fetchHolidyData() {
+        const response = await fetchHolidyDate("getRestDeInfo");
+        const holidyDates = response.data.response.body.items.item;
+
+        const mapHolidyDates = holidyDates.reduce<{
+            [key: string]: IHolidyDate;
+        }>((acc, cur) => {
+            acc[cur.locdate] = cur;
+            return acc;
+        }, {});
+
+        console.log("ㅋㅋ", mapHolidyDates);
+
+        setHoliDay([mapHolidyDates]);
     }
 
     //이전달(왼쪽)으로 이동하기
@@ -52,26 +70,20 @@ export default function Calandar() {
         }
     };
 
-    const resetDate = (viewYear: number, viewMonth: number) => {
-        setYear(viewYear);
-        setMonth(viewMonth + 1);
-    };
-
     useEffect(() => {
-        // const h = fetchAPI();
-        // console.log(h);
-
-        const dateList = createDate(year, month - 1); //계산돌릴때는 날자가 인덱스 0부터 시작해서 -1 해줘야함
-        setViewData(dateList);
+        fetchHolidyData();
+        console.log("주말옴", holiday);
     }, []);
 
     useEffect(() => {
-        const dateList = createDate(year, month - 1); //계산돌릴때는 날자가 인덱스 0부터 시작해서 -1 해줘야함
-        setViewData(dateList);
-    }, [year, month]);
+        if (holiday) {
+            const dateList = getCreateDateList(year, month - 1, holiday); //계산돌릴때는 날자가 인덱스 0부터 시작해서 -1 해줘야함
+            setViewData(dateList);
+        }
+    }, [year, month, holiday]);
 
     useEffect(() => {
-        // console.log(viewDate);
+        console.log("🎎🎎🎎🎎", viewDate);
     }, [viewDate]);
 
     if (!viewDate) {
@@ -94,7 +106,16 @@ export default function Calandar() {
                 </div>
                 <div className="calandar-grid">
                     {viewDate.map((item) => (
-                        <div key={item.full}>{item.day}</div>
+                        <div key={item.full}>
+                            <p
+                                style={{
+                                    color: item.restDay ? "tomato" : "inherit",
+                                }}
+                            >
+                                {item.day}
+                            </p>
+                            <p>{item.holiday_name}</p>
+                        </div>
                     ))}
                 </div>
             </div>
