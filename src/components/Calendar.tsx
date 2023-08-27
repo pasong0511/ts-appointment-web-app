@@ -1,8 +1,10 @@
+import classnames from "classnames";
 import { useEffect, useState } from "react";
 import { WEEK_LIST_KR } from "../constants/calendarConstants";
 import { IInfomationViewDate, IHolidayDic } from "../types/date";
 import { fetchHolidyDate } from "../utils/api";
 import { getCreateDateList } from "../utils/createDate";
+import { Week } from "../enums/dateEnums";
 
 export default function Calendar() {
     const date = new Date();
@@ -65,10 +67,14 @@ export default function Calendar() {
     return (
         <div className="calendar">
             <div className="calendar-header">
-                <button onClick={onClickPrev}>←</button>
-                <div>{year}년</div>
-                <div>{month}월</div>
-                <button onClick={onClickNext}>→</button>
+                <div>
+                    <span>{year}년</span>
+                    <span>{month}월</span>
+                </div>
+                <div>
+                    <button onClick={onClickPrev}>←</button>
+                    <button onClick={onClickNext}>→</button>
+                </div>
             </div>
             <div className="calendar-body">
                 <div className="calendar-week">
@@ -78,14 +84,19 @@ export default function Calendar() {
                 </div>
                 <div className="calendar-grid">
                     {viewDate.map((item) => (
-                        <div key={item.full}>
-                            <p
-                                style={{
-                                    color: item.restDay ? "tomato" : "inherit",
-                                }}
-                            >
-                                {item.day}
-                            </p>
+                        <div
+                            key={item.full}
+                            className={classnames("day", {
+                                thisMonth: item.thisMonth,
+                                "not-thisMonth": !item.thisMonth,
+                                sunday:
+                                    item.thisMonth && item.week === Week.SUN,
+                                saturday:
+                                    item.thisMonth && item.week === Week.SAT,
+                                holiday: item.thisMonth && item.holiday,
+                            })}
+                        >
+                            <p>{item.day}</p>
                             <p>{item.holiday_name}</p>
                         </div>
                     ))}

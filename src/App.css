@@ -21,3 +21,23 @@
     display: grid;
     grid-template-columns: repeat(7, 1fr);
 }
+
+.day.thisMonth {
+    color: black;
+}
+
+.day.not-thisMonth {
+    color: rgb(175, 175, 175);
+}
+
+.day.thisMonth.sunday {
+    color: tomato;
+}
+
+.day.thisMonth.saturday {
+    color: rgb(85, 40, 246);
+}
+
+.day.thisMonth.holiday {
+    color: tomato;
+}
