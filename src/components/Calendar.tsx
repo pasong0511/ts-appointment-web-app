@@ -62,7 +62,7 @@ export default function Calendar() {
     }, [year, month, today, holiday]);
 
     useEffect(() => {
-        console.log("현재화면 날짜-->", viewDate);
+        // console.log("현재화면 날짜-->", viewDate);
     }, [viewDate]);
 
     if (!viewDate) {
@@ -102,14 +102,13 @@ export default function Calendar() {
                             })}
                         >
                             <div className="grid-cell-header">
+                                <p>{item.day}</p>
+                                <p>{item.holiday_name}</p>
                                 <p
                                     className={classnames("", {
                                         "today-mark": item.today,
                                     })}
                                 ></p>
-
-                                <p>{item.day}</p>
-                                <p>{item.holiday_name}</p>
                             </div>
                         </div>
                     ))}

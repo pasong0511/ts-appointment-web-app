@@ -42,11 +42,10 @@
     color: tomato;
 }
 
-.today-mark {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: tomato;
+.today-mark::before {
+    content: "•";
+    font-size: 20px;
+    color: #27ae60;
 }
 
 .grid-cell-header {
