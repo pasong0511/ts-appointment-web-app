@@ -17,6 +17,7 @@ export default function Calendar() {
             String(date.getMonth() + 1).padStart(2, "0") +
             String(date.getDate()).padStart(2, "0")
     );
+    const [selectList, setSelectList] = useState<IInfomationViewDate[]>([]);
 
     async function fetchHolidyData() {
         const response = await fetchHolidyDate("getRestDeInfo", year);
@@ -50,6 +51,21 @@ export default function Calendar() {
         }
     };
 
+    const onClickDay = (dayItem: IInfomationViewDate) => {
+        setSelectList((prevState) => {
+            //const isSelectDate = prevState.includes(dayItem);
+            const isSelectDate = prevState.find(
+                (item) => item.full === dayItem.full
+            );
+
+            if (isSelectDate) {
+                return prevState.filter((item) => item.full !== dayItem.full);
+            }
+
+            return [...prevState, dayItem];
+        });
+    };
+
     useEffect(() => {
         fetchHolidyData();
     }, [year]);
@@ -62,8 +78,8 @@ export default function Calendar() {
     }, [year, month, today, holiday]);
 
     useEffect(() => {
-        // console.log("현재화면 날짜-->", viewDate);
-    }, [viewDate]);
+        console.log("🎈🎈", selectList);
+    }, [selectList]);
 
     if (!viewDate) {
         return <></>;
@@ -90,6 +106,7 @@ export default function Calendar() {
                 <div className="calendar-grid">
                     {viewDate.map((item) => (
                         <div
+                            onClick={() => onClickDay(item)}
                             key={item.full}
                             className={classnames("day", {
                                 thisMonth: item.thisMonth,
@@ -101,14 +118,22 @@ export default function Calendar() {
                                 holiday: item.thisMonth && item.holiday,
                             })}
                         >
-                            <div className="grid-cell-header">
-                                <p>{item.day}</p>
-                                <p>{item.holiday_name}</p>
-                                <p
-                                    className={classnames("", {
-                                        "today-mark": item.today,
-                                    })}
-                                ></p>
+                            <div
+                                className={classnames("", {
+                                    select: selectList.find(
+                                        (select) => select.full === item.full
+                                    ),
+                                })}
+                            >
+                                <div className="grid-cell-header">
+                                    <p>{item.day}</p>
+                                    <p>{item.holiday_name}</p>
+                                    <p
+                                        className={classnames("", {
+                                            "today-mark": item.today,
+                                        })}
+                                    ></p>
+                                </div>
                             </div>
                         </div>
                     ))}

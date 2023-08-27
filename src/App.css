@@ -51,3 +51,7 @@
 .grid-cell-header {
     display: flex;
 }
+
+.select {
+    background-color: rgb(63, 162, 249);
+}
