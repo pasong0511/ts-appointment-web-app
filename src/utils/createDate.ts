@@ -1,4 +1,5 @@
-import { WEEK_LIST, WEEK_LIST_KR } from "../enums/date";
+import { Week } from "../enums/dateEnums";
+import { WEEK_LIST, WEEK_LIST_KR } from "../constants/calendarConstants";
 import {
     IHolidayDic,
     IInfomationViewDate,
@@ -39,6 +40,7 @@ const createDate = (viewYear: number, ViewMonth: number): IViewDate[] => {
             day: i,
             week: WEEK_LIST[(i - prevDate.LastDay + prevDate.week) % 7],
             week_kr: WEEK_LIST_KR[(i - prevDate.LastDay + prevDate.week) % 7],
+            thisMonth: false,
         });
 
         if (i === prevDate.LastDay) {
@@ -58,6 +60,7 @@ const createDate = (viewYear: number, ViewMonth: number): IViewDate[] => {
             day: i,
             week: WEEK_LIST[(thisStartDay + (i - 1)) % 7],
             week_kr: WEEK_LIST_KR[(thisStartDay + (i - 1)) % 7],
+            thisMonth: true,
         });
     }
 
@@ -73,6 +76,7 @@ const createDate = (viewYear: number, ViewMonth: number): IViewDate[] => {
             day: i,
             week: WEEK_LIST[(thisDate.week + i) % 7],
             week_kr: WEEK_LIST_KR[(thisDate.week + i) % 7],
+            thisMonth: false,
         });
     }
 
@@ -92,8 +96,8 @@ const addInfomationDate = (
                 ? holidayMap[item.full].dateName
                 : null,
             restDay:
-                item.week === "SUN" ||
-                item.week === "SAT" ||
+                item.week === Week.SUN ||
+                item.week === Week.SAT ||
                 !!holidayMap[item.full],
             active: false,
         };

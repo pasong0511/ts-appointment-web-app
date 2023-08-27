@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { WEEK_LIST_KR_LIST } from "../enums/date";
+import { WEEK_LIST_KR } from "../constants/calendarConstants";
 import { IInfomationViewDate, IHolidayDic } from "../types/date";
 import { fetchHolidyDate } from "../utils/api";
 import { getCreateDateList } from "../utils/createDate";
 
-export default function Calandar() {
+export default function Calendar() {
     const date = new Date();
     const [viewDate, setViewData] = useState<IInfomationViewDate[]>([]);
     const [holiday, setHoliDay] = useState<IHolidayDic[]>();
@@ -72,11 +72,11 @@ export default function Calandar() {
             </div>
             <div className="calendar-body">
                 <div className="calendar-week">
-                    {WEEK_LIST_KR_LIST.map((week) => (
+                    {WEEK_LIST_KR.map((week) => (
                         <div key={week}>{week}</div>
                     ))}
                 </div>
-                <div className="calandar-grid">
+                <div className="calendar-grid">
                     {viewDate.map((item) => (
                         <div key={item.full}>
                             <p
