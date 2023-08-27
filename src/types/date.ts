@@ -5,13 +5,6 @@ export interface ILastDate {
     week: number;
 }
 
-export interface IDate {
-    year: number;
-    month: number;
-    day: number;
-    week: number;
-}
-
 export interface IViewDate {
     full: string;
     year: number;
@@ -44,4 +37,8 @@ export interface IHolidyDate {
     isHoliday: string;
     locdate: string;
     seq: number;
+}
+
+export interface IHolidayDic {
+    [key: string]: IHolidyDate;
 }

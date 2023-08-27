@@ -1,5 +1,10 @@
 import { WEEK_LIST, WEEK_LIST_KR } from "../enums/date";
-import { IInfomationViewDate, ILastDate, IViewDate } from "../types/date";
+import {
+    IHolidayDic,
+    IInfomationViewDate,
+    ILastDate,
+    IViewDate,
+} from "../types/date";
 
 const createLastDate = (lastDate: Date): ILastDate => {
     const year = lastDate.getFullYear(); //년
@@ -15,10 +20,7 @@ const createLastDate = (lastDate: Date): ILastDate => {
     };
 };
 
-export const createDate = (
-    viewYear: number,
-    ViewMonth: number
-): IViewDate[] => {
+const createDate = (viewYear: number, ViewMonth: number): IViewDate[] => {
     const prevDate = createLastDate(new Date(viewYear, ViewMonth, 0));
     const thisDate = createLastDate(new Date(viewYear, ViewMonth + 1, 0));
     const nextDate = createLastDate(new Date(viewYear, ViewMonth + 2, 0));
@@ -77,9 +79,9 @@ export const createDate = (
     return dateList;
 };
 
-export const addInfomationDate = (
+const addInfomationDate = (
     dateList: IViewDate[],
-    holidayList: any
+    holidayList: IHolidayDic[]
 ): IInfomationViewDate[] => {
     const holidayMap = holidayList[0];
     const newDate = dateList.map((item) => {
@@ -103,12 +105,10 @@ export const addInfomationDate = (
 export const getCreateDateList = (
     viewYear: number,
     ViewMonth: number,
-    holidayList: any
+    holidayList: IHolidayDic[]
 ): IInfomationViewDate[] => {
     const defaultDateList = createDate(viewYear, ViewMonth);
     const infomationDateList = addInfomationDate(defaultDateList, holidayList);
-
-    console.log("👓👓👓", infomationDateList);
 
     return infomationDateList;
 };

@@ -1,51 +1,24 @@
 import { useEffect, useState } from "react";
-import { WEEK_LIST, WEEK_LIST_KR, WEEK_LIST_KR_LIST } from "../enums/date";
-import {
-    ILastDate,
-    IHolidayAPIData,
-    IHolidyDate,
-    IViewDate,
-    IInfomationViewDate,
-} from "../types/date";
-import {
-    createDate,
-    addInfomationDate,
-    getCreateDateList,
-} from "../utils/createDate";
-import axios from "axios";
-
-function fetchHolidyDate(path: string) {
-    const API_URL = `http://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/${path}?`;
-    return axios.get<IHolidayAPIData>(
-        API_URL +
-            "solYear=2023&numOfRows=100&ServiceKey=" +
-            process.env.REACT_APP_PUBLIC_POTAL_KEY
-    );
-}
+import { WEEK_LIST_KR_LIST } from "../enums/date";
+import { IInfomationViewDate, IHolidayDic } from "../types/date";
+import { fetchHolidyDate } from "../utils/api";
+import { getCreateDateList } from "../utils/createDate";
 
 export default function Calandar() {
     const date = new Date();
     const [viewDate, setViewData] = useState<IInfomationViewDate[]>([]);
-    const [holiday, setHoliDay] = useState<
-        {
-            [key: string]: IHolidyDate;
-        }[]
-    >();
+    const [holiday, setHoliDay] = useState<IHolidayDic[]>();
     const [year, setYear] = useState(date.getFullYear());
     const [month, setMonth] = useState(date.getMonth() + 1);
 
     async function fetchHolidyData() {
-        const response = await fetchHolidyDate("getRestDeInfo");
+        const response = await fetchHolidyDate("getRestDeInfo", year);
         const holidyDates = response.data.response.body.items.item;
 
-        const mapHolidyDates = holidyDates.reduce<{
-            [key: string]: IHolidyDate;
-        }>((acc, cur) => {
+        const mapHolidyDates = holidyDates.reduce<IHolidayDic>((acc, cur) => {
             acc[cur.locdate] = cur;
             return acc;
         }, {});
-
-        console.log("ㅋㅋ", mapHolidyDates);
 
         setHoliDay([mapHolidyDates]);
     }
@@ -72,8 +45,7 @@ export default function Calandar() {
 
     useEffect(() => {
         fetchHolidyData();
-        console.log("주말옴", holiday);
-    }, []);
+    }, [year]);
 
     useEffect(() => {
         if (holiday) {
@@ -83,7 +55,7 @@ export default function Calandar() {
     }, [year, month, holiday]);
 
     useEffect(() => {
-        console.log("🎎🎎🎎🎎", viewDate);
+        console.log("현재화면 날짜-->", viewDate);
     }, [viewDate]);
 
     if (!viewDate) {
