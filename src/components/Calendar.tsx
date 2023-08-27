@@ -12,6 +12,11 @@ export default function Calendar() {
     const [holiday, setHoliDay] = useState<IHolidayDic[]>();
     const [year, setYear] = useState(date.getFullYear());
     const [month, setMonth] = useState(date.getMonth() + 1);
+    const [today, setToday] = useState(
+        String(date.getFullYear()) +
+            String(date.getMonth() + 1).padStart(2, "0") +
+            String(date.getDate()).padStart(2, "0")
+    );
 
     async function fetchHolidyData() {
         const response = await fetchHolidyDate("getRestDeInfo", year);
@@ -51,10 +56,10 @@ export default function Calendar() {
 
     useEffect(() => {
         if (holiday) {
-            const dateList = getCreateDateList(year, month - 1, holiday); //계산돌릴때는 날자가 인덱스 0부터 시작해서 -1 해줘야함
+            const dateList = getCreateDateList(year, month - 1, today, holiday); //계산돌릴때는 날자가 인덱스 0부터 시작해서 -1 해줘야함
             setViewData(dateList);
         }
-    }, [year, month, holiday]);
+    }, [year, month, today, holiday]);
 
     useEffect(() => {
         console.log("현재화면 날짜-->", viewDate);
@@ -96,8 +101,16 @@ export default function Calendar() {
                                 holiday: item.thisMonth && item.holiday,
                             })}
                         >
-                            <p>{item.day}</p>
-                            <p>{item.holiday_name}</p>
+                            <div className="grid-cell-header">
+                                <p
+                                    className={classnames("", {
+                                        "today-mark": item.today,
+                                    })}
+                                ></p>
+
+                                <p>{item.day}</p>
+                                <p>{item.holiday_name}</p>
+                            </div>
                         </div>
                     ))}
                 </div>

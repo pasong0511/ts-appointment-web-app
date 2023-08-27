@@ -13,6 +13,7 @@ export interface IViewDate {
     week: string;
     week_kr: string;
     thisMonth: boolean;
+    today: boolean;
 }
 
 export interface IInfomationViewDate extends IViewDate {

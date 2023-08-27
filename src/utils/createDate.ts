@@ -21,7 +21,11 @@ const createLastDate = (lastDate: Date): ILastDate => {
     };
 };
 
-const createDate = (viewYear: number, ViewMonth: number): IViewDate[] => {
+const createDate = (
+    viewYear: number,
+    ViewMonth: number,
+    today: string
+): IViewDate[] => {
     const prevDate = createLastDate(new Date(viewYear, ViewMonth, 0));
     const thisDate = createLastDate(new Date(viewYear, ViewMonth + 1, 0));
     const nextDate = createLastDate(new Date(viewYear, ViewMonth + 2, 0));
@@ -41,6 +45,7 @@ const createDate = (viewYear: number, ViewMonth: number): IViewDate[] => {
             week: WEEK_LIST[(i - prevDate.LastDay + prevDate.week) % 7],
             week_kr: WEEK_LIST_KR[(i - prevDate.LastDay + prevDate.week) % 7],
             thisMonth: false,
+            today: false,
         });
 
         if (i === prevDate.LastDay) {
@@ -50,17 +55,19 @@ const createDate = (viewYear: number, ViewMonth: number): IViewDate[] => {
 
     //1일부터 마지막 일까지 반복문 돌면서 만들기
     for (let i = 1; i <= thisDate.LastDay; i++) {
+        const fullDay = `${thisDate.year}${String(thisDate.month + 1).padStart(
+            2,
+            "0"
+        )}${String(i).padStart(2, "0")}`;
         dateList.push({
-            full: `${thisDate.year}${String(thisDate.month + 1).padStart(
-                2,
-                "0"
-            )}${String(i).padStart(2, "0")}`,
+            full: fullDay,
             year: thisDate.year,
             month: thisDate.month + 1,
             day: i,
             week: WEEK_LIST[(thisStartDay + (i - 1)) % 7],
             week_kr: WEEK_LIST_KR[(thisStartDay + (i - 1)) % 7],
             thisMonth: true,
+            today: fullDay === today,
         });
     }
 
@@ -77,6 +84,7 @@ const createDate = (viewYear: number, ViewMonth: number): IViewDate[] => {
             week: WEEK_LIST[(thisDate.week + i) % 7],
             week_kr: WEEK_LIST_KR[(thisDate.week + i) % 7],
             thisMonth: false,
+            today: false,
         });
     }
 
@@ -109,9 +117,10 @@ const addInfomationDate = (
 export const getCreateDateList = (
     viewYear: number,
     ViewMonth: number,
+    today: string,
     holidayList: IHolidayDic[]
 ): IInfomationViewDate[] => {
-    const defaultDateList = createDate(viewYear, ViewMonth);
+    const defaultDateList = createDate(viewYear, ViewMonth, today);
     const infomationDateList = addInfomationDate(defaultDateList, holidayList);
 
     return infomationDateList;
