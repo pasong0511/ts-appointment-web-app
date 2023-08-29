@@ -18,6 +18,8 @@ export default function Calendar() {
             String(date.getDate()).padStart(2, "0")
     );
     const [selectList, setSelectList] = useState<IInfomationViewDate[]>([]);
+    const [isDragging, setIsDragging] = useState(false);
+    const [isClicking, setIsClicking] = useState(false);
 
     async function fetchHolidyData() {
         const response = await fetchHolidyDate("getRestDeInfo", year);
@@ -52,23 +54,54 @@ export default function Calendar() {
     };
 
     const onClickDay = (dayItem: IInfomationViewDate) => {
+        console.log("클릭", dayItem);
+
+        if (isClicking) {
+            setSelectList((prevState) => {
+                setIsClicking(false); // 클릭 상태 해제
+                //const isSelectDate = prevState.includes(dayItem);
+                const isSelectDate = prevState.find(
+                    (item) => item.full === dayItem.full
+                );
+
+                if (isSelectDate) {
+                    return prevState.filter(
+                        (item) => item.full !== dayItem.full
+                    );
+                }
+
+                return [...prevState, dayItem];
+            });
+        }
+    };
+
+    const onMouseDown = (dayItem: IInfomationViewDate) => {
+        setIsDragging(true);
         setSelectList((prevState) => {
-            //const isSelectDate = prevState.includes(dayItem);
-            const isSelectDate = prevState.find(
-                (item) => item.full === dayItem.full
-            );
-
-            if (isSelectDate) {
-                return prevState.filter((item) => item.full !== dayItem.full);
-            }
-
             return [...prevState, dayItem];
         });
+    };
+
+    const onMouseEnter = (dayItem: IInfomationViewDate) => {
+        if (isDragging) {
+            setSelectList((prevState) => {
+                return [...prevState, dayItem];
+            });
+        }
+    };
+
+    const onMouseUp = () => {
+        setIsDragging(false);
+        setIsClicking(true); // 클릭 상태로 설정
     };
 
     useEffect(() => {
         fetchHolidyData();
     }, [year]);
+
+    useEffect(() => {
+        console.log(isDragging);
+    }, [isDragging]);
 
     useEffect(() => {
         if (holiday) {
@@ -97,7 +130,7 @@ export default function Calendar() {
                     <button onClick={onClickNext}>→</button>
                 </div>
             </div>
-            <div className="calendar-body">
+            <div className="calendar-body" onMouseUp={onMouseUp}>
                 <div className="calendar-week">
                     {WEEK_LIST_KR.map((week) => (
                         <div key={week}>{week}</div>
@@ -108,6 +141,7 @@ export default function Calendar() {
                         <div
                             onClick={() => onClickDay(item)}
                             key={item.full}
+                            data-date={item.full}
                             className={classnames("day", {
                                 thisMonth: item.thisMonth,
                                 "not-thisMonth": !item.thisMonth,
@@ -117,6 +151,8 @@ export default function Calendar() {
                                     item.thisMonth && item.week === Week.SAT,
                                 holiday: item.thisMonth && item.holiday,
                             })}
+                            onMouseDown={() => onMouseDown(item)}
+                            onMouseEnter={() => onMouseEnter(item)}
                         >
                             <div
                                 className={classnames("", {
